@@ -36,7 +36,9 @@
 
     //$query = 'INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES("' . $_REQUEST['name'] . '",' . $_REQUEST["locationID"] . ')';
 
-	$query = 'INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES("' . $_REQUEST["firstname"] . '", ' . '"' . $_REQUEST["lastname"] . '",' . '"'  . $_REQUEST["email"] . '",' . '(SELECT id FROM department WHERE name = '. '"' . $_REQUEST["department"] . '"' .'))';
+	//$query = 'INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES("' . $_REQUEST["firstname"] . '", ' . '"' . $_REQUEST["lastname"] . '",' . '"'  . $_REQUEST["email"] . '",' . '(SELECT id FROM department WHERE name = '. '"' . $_REQUEST["department"] . '"' .'))';
+
+	$query = 'INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES("' . $_REQUEST["firstname"] . '", ' . '"' . $_REQUEST["lastname"] . '",' . '"'  . $_REQUEST["email"] . '",' . $_REQUEST["department"] .')';
 
 	$result = $conn->query($query);
 	

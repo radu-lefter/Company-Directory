@@ -1,3 +1,11 @@
+//Preloader
+$(window).on('load', function () {
+  if ($('#preloader').length) {
+  $('#preloader').delay(100).fadeOut('slow', function() {$(this).remove();});
+}
+});
+
+
 //load all data at startup
 $(window).on('load', getAll());
 
@@ -153,8 +161,57 @@ $("#editPersonnel").submit(function(e) {
 });
 
 
+//Search
+function searchTable() {
+  var input, filter, found, table, tr, td, i, j;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      for (j = 0; j < td.length; j++) {
+          if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+              found = true;
+          }
+      }
+      if (found) {
+          tr[i].style.display = "";
+          found = false;
+      } else if (tr[i].id != 'tableHeader') {
+          
+          tr[i].style.display = "none";}
+  }
+}
 
 
+//Populate the select list
+
+let dropdown = $('#depDropdown');
+
+dropdown.empty();
+dropdown.append('<option selected="true" value="dummy" disabled>Choose department</option>');
+dropdown.prop('selectedIndex', 0);
+
+$.ajax({
+  type: 'GET',
+  url: "php/getAllDepartments.php",
+  success: function (response) {
+
+      //var output = $.parseJSON(response);
+      console.log(response);
+
+      if(response){
+          for (let item of response['data']) {
+              dropdown.append($('<option></option>').attr('value', item.id).text(item.name));
+       }
+      }
+     
+     
+  },
+}).fail(function () {
+  console.log("Error encountered!")
+});
 
 //make the table sortable
 const table = document.querySelector('table'); //get the table to be sorted

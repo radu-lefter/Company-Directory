@@ -13,6 +13,8 @@
     <script src="jscript/jQuery-3.6.0.js"></script>
   </head>
     <body>
+      <div id=”preloader”></div>
+
       <div class="container">
         <div  class="row g-5 with-margin">
           <div class='col-8'>
@@ -38,9 +40,11 @@
                         <input type="text" name="lastname" id="lastname" class="form-control">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="text" name="email" id="email" class="form-control">
-                        <label for="department" class="form-label">Department</label>
-                        <input type="text" name="department" id="department" class="form-control">
-                        <input type="submit" name="submit" value="Add" class="btn btn-primary" >
+                        <label for="depDropdown" class="form-label">Department</label>
+                        <select id="depDropdown" name="department" class="form-select">
+                        </select>
+                        <!-- <input type="text" name="department" id="department" class="form-control"> -->
+                        <input type="submit" name="submit" value="Add" class="btn btn-primary mt-3" >
                     </form>
                     </div>
                     <!-- <div class="modal-footer">
@@ -70,7 +74,7 @@
                         <input type="text" name="email" id="email-edit" class="form-control">
                         <label for="department-edit" class="form-label">Department</label>
                         <input type="text" name="department" id="department-edit" class="form-control">
-                        <input type="submit" name="submit" value="Edit" class="btn btn-primary mt-1" >
+                        <input type="submit" name="submit" value="Edit" class="btn btn-primary mt-3" >
                     </form>
                     </div>
                     <!-- <div class="modal-footer">
@@ -83,20 +87,18 @@
 
           </div>
           <div class='col-4'>
-            <h3>Look up user by location</h3>
-            <form method="post">
-            <label for="location" class="form-label">Location</label>
-            <input type="text" id="location" name="location" class="form-control">
-            <input type="submit" name="submit" value="View Results">
-        </form>
+            <h3>Search in real time</h3>
+ 
+            <input type="text" id="myInput" onkeyup="searchTable()" class="form-control">
+ 
           </div>
         </div>
         <div  class="row g-5 mx-auto">
           <div class='col-12'>
             <h3>All contacts</h3>
-            <table class="table table-primary table-striped">
+            <table class="table table-primary table-striped" id="myTable">
               <thead>
-                <tr>
+                <tr id='tableHeader'>
                   <th>First name</th>
                   <th>Last name</th>
                   <th>Email</th>
