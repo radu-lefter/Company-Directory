@@ -74,7 +74,7 @@ function getAll(){
 };
 
 
-//Delete
+//Delete personnel
 function deletePerson(e, id){
   e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
 
@@ -95,7 +95,7 @@ function deletePerson(e, id){
 });
 }
 
-//Add
+//Add personnel
 $("#addPersonnel").submit(function(e) {
 
   e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -117,7 +117,8 @@ $("#addPersonnel").submit(function(e) {
   
 });
 
-//Update
+//Update personnel
+
 function editPerson(e, id){
   
   var row = e.closest("tr");
@@ -135,8 +136,42 @@ console.log(fields);
 document.forms['editPersonnel']['firstname'].value = fields[0];
 document.forms['editPersonnel']['lastname'].value = fields[1];
 document.forms['editPersonnel']['email'].value = fields[2];
-document.forms['editPersonnel']['department'].value = fields[3];
+//document.forms['editPersonnel']['department'].value = fields[3];
 document.forms['editPersonnel']['id'].value = fields[5];
+
+let dropdownEdit = $('#depDropdown-edit');
+
+dropdownEdit.empty();
+
+  
+  $.ajax({
+    type: 'GET',
+    url: "php/getAllDepartments.php",
+    success: function (response) {
+  
+        console.log(response);
+
+        var result = response['data'].filter(obj => {
+          return obj.name === fields[3]
+        })[0]
+
+        console.log(result.id);
+  
+        if(response){
+            for (let item of response['data']) {
+              if(result.id == item.id){
+                dropdownEdit.append($('<option selected="true"></option>').attr('value', item.id).text(item.name));
+              } else {
+                dropdownEdit.append($('<option></option>').attr('value', item.id).text(item.name));
+              }
+         }
+        }
+
+        
+    },
+  }).fail(function () {
+    console.log("Error encountered!")
+  });
 
 
 }
@@ -161,7 +196,38 @@ $("#editPersonnel").submit(function(e) {
 });
 
 
-//Search
+
+
+
+//Populate the add personnel select list
+
+let dropdownAdd = $('#depDropdown-add');
+
+dropdownAdd.empty();
+dropdownAdd.append('<option selected="true" value="dummy" disabled>Choose department</option>');
+dropdownAdd.prop('selectedIndex', 0);
+  
+  $.ajax({
+    type: 'GET',
+    url: "php/getAllDepartments.php",
+    success: function (response) {
+  
+        console.log(response);
+  
+        if(response){
+            for (let item of response['data']) {
+              dropdownAdd.append($('<option></option>').attr('value', item.id).text(item.name));
+         }
+        }
+       
+       
+    },
+  }).fail(function () {
+    console.log("Error encountered!")
+  });
+
+
+//Search 
 function searchTable() {
   var input, filter, found, table, tr, td, i, j;
   input = document.getElementById("myInput");
@@ -185,33 +251,6 @@ function searchTable() {
 }
 
 
-//Populate the select list
-
-let dropdown = $('#depDropdown');
-
-dropdown.empty();
-dropdown.append('<option selected="true" value="dummy" disabled>Choose department</option>');
-dropdown.prop('selectedIndex', 0);
-
-$.ajax({
-  type: 'GET',
-  url: "php/getAllDepartments.php",
-  success: function (response) {
-
-      //var output = $.parseJSON(response);
-      console.log(response);
-
-      if(response){
-          for (let item of response['data']) {
-              dropdown.append($('<option></option>').attr('value', item.id).text(item.name));
-       }
-      }
-     
-     
-  },
-}).fail(function () {
-  console.log("Error encountered!")
-});
 
 //make the table sortable
 const table = document.querySelector('table'); //get the table to be sorted
