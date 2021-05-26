@@ -7,7 +7,11 @@ $(window).on('load', function () {
 
 
 //load all data at startup
-$(window).on('load', getAll());
+$(window).on('load', function(){
+  getAll();
+  populateDep();
+  populateLoc();
+});
 
 
 function getAll(){
@@ -114,7 +118,6 @@ $("#addPersonnel").submit(function(e) {
          }
        });
 
-  
 });
 
 //Update personnel
@@ -196,35 +199,193 @@ $("#editPersonnel").submit(function(e) {
 });
 
 
+//Add department
+$("#addDep").submit(function(e) {
 
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+  $('#depModal').modal('hide');
 
-
-//Populate the add personnel select list
-
-let dropdownAdd = $('#depDropdown-add');
-
-dropdownAdd.empty();
-dropdownAdd.append('<option selected="true" value="dummy" disabled>Choose department</option>');
-dropdownAdd.prop('selectedIndex', 0);
+  var form = $(this);
   
   $.ajax({
-    type: 'GET',
-    url: "php/getAllDepartments.php",
-    success: function (response) {
-  
-        console.log(response);
-  
-        if(response){
-            for (let item of response['data']) {
-              dropdownAdd.append($('<option></option>').attr('value', item.id).text(item.name));
+         type: "POST",
+         url: "php/insertDepartment.php",
+         data: form.serialize(), // serializes the form's elements.
+         success: function(data)
+         {
+          populateDep()
+          getAll();
          }
-        }
-       
-       
-    },
-  }).fail(function () {
-    console.log("Error encountered!")
-  });
+       });
+
+});
+
+//Delete department
+$("#deleteDep").submit(function(e) {
+
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+  $('#depModal').modal('hide');
+
+  var form = $(this);
+  
+  $.ajax({
+         type: "POST",
+         url: "php/deleteDepartmentByID.php",
+         data: form.serialize(), // serializes the form's elements.
+         success: function(data)
+         {
+          populateDep()
+          getAll();
+         }
+       });
+
+});
+
+//Update department
+$("#editDep").submit(function(e) {
+
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+  $('#depModal').modal('hide');
+
+  var form = $(this);
+  
+  $.ajax({
+         type: "POST",
+         url: "php/updateDepartments.php",
+         data: form.serialize(), // serializes the form's elements.
+         success: function(data)
+         {
+          populateDep()
+          getAll();
+         }
+       });
+
+});
+
+//Add location
+$("#addLoc").submit(function(e) {
+
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+  $('#locModal').modal('hide');
+
+  var form = $(this);
+  
+  $.ajax({
+         type: "POST",
+         url: "php/insertLocation.php",
+         data: form.serialize(), // serializes the form's elements.
+         success: function(data)
+         {
+          populateLoc();
+          getAll();
+         }
+       });
+
+});
+
+//Delete department
+$("#deleteLoc").submit(function(e) {
+
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+  $('#locModal').modal('hide');
+
+  var form = $(this);
+  
+  $.ajax({
+         type: "POST",
+         url: "php/deleteLocation.php",
+         data: form.serialize(), // serializes the form's elements.
+         success: function(data)
+         {
+          populateLoc();
+          getAll();
+         }
+       });
+
+});
+
+//Update department
+$("#editLoc").submit(function(e) {
+
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+  $('#locModal').modal('hide');
+
+  var form = $(this);
+  
+  $.ajax({
+         type: "POST",
+         url: "php/updateLocation.php",
+         data: form.serialize(), // serializes the form's elements.
+         success: function(data)
+         {
+          populateLoc();
+          getAll();
+         }
+       });
+
+});
+
+
+//Populate the departments select list
+function populateDep(){
+  let dropdownAdd = $('.depDropdown');
+
+  dropdownAdd.empty();
+  dropdownAdd.append('<option selected="true" value="dummy" disabled>Choose department</option>');
+  dropdownAdd.prop('selectedIndex', 0);
+    
+    $.ajax({
+      type: 'GET',
+      url: "php/getAllDepartments.php",
+      success: function (response) {
+    
+          console.log(response);
+    
+          if(response){
+              for (let item of response['data']) {
+                dropdownAdd.append($('<option></option>').attr('value', item.id).text(item.name));
+           }
+          }
+         
+         
+      },
+    }).fail(function () {
+      console.log("Error encountered!")
+    });
+}
+
+
+
+//Populate the location select list
+function populateLoc(){
+  let dropdownAddLocation = $('.locDropdown');
+
+  dropdownAddLocation.empty();
+  dropdownAddLocation.append('<option selected="true" value="dummy" disabled>Choose location</option>');
+  dropdownAddLocation.prop('selectedIndex', 0);
+    
+    $.ajax({
+      type: 'GET',
+      url: "php/getAllLocations.php",
+      success: function (response) {
+    
+          console.log(response);
+    
+          if(response){
+              for (let item of response['data']) {
+                dropdownAddLocation.append($('<option></option>').attr('value', item.id).text(item.name));
+           }
+          }
+         
+         
+      },
+    }).fail(function () {
+      console.log("Error encountered!")
+    });
+}
+
+
+
 
 
 //Search 
