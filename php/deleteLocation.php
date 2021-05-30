@@ -35,33 +35,53 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-	$query = 'DELETE FROM location WHERE id = ' . $_REQUEST['loc-del'];
+	$query_check = 'SELECT * FROM department WHERE locationID='. $_REQUEST['loc-del'];
 
-	$result = $conn->query($query);
+	$result_check = $conn->query($query_check);
+
+	if(mysqli_num_rows($result_check)==0){
+
+		$query = 'DELETE FROM location WHERE id = ' . $_REQUEST['loc-del'];
+
+		$result = $conn->query($query);
+		
+		if (!$result) {
 	
-	if (!$result) {
-
-		$output['status']['code'] = "400";
-		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
+			$output['status']['code'] = "400";
+			$output['status']['name'] = "executed";
+			$output['status']['description'] = "query failed";	
+			$output['data'] = [];
+	
+			mysqli_close($conn);
+	
+			echo json_encode($output); 
+	
+			exit;
+	
+		}
+	
+		$output['status']['code'] = "200";
+		$output['status']['name'] = "ok";
+		$output['status']['description'] = "success";
+		$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
 		$output['data'] = [];
-
+		
 		mysqli_close($conn);
-
+	
 		echo json_encode($output); 
 
-		exit;
+	} else {
 
+			$output['status']['code'] = "200";
+			$output['status']['name'] = "ok";
+			$output['status']['description'] = "query failed";	
+			$output['data'] = [1];
+	
+			mysqli_close($conn);
+	
+			echo json_encode($output); 
 	}
 
-	$output['status']['code'] = "200";
-	$output['status']['name'] = "ok";
-	$output['status']['description'] = "success";
-	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [];
 	
-	mysqli_close($conn);
-
-	echo json_encode($output); 
 
 ?>

@@ -16,8 +16,7 @@
       <div id=”preloader”></div>
 
       <div class="container">
-        <div  class="row g-5 with-margin">
-          <div class='col-8'>
+        <div>
             <h3>Welcome</h3>
             <!-- Button trigger modal -->
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
@@ -29,6 +28,10 @@
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#locModal">
                 Manage locations
               </button>
+
+              <h3>Search in real time</h3>
+ 
+              <input type="text" id="myInput" onkeyup="searchTable()" class="form-control">
 
               <!-- Modal Add Personnel-->
               <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -103,25 +106,27 @@
                     <div class="modal-body">
                       <h4>Add new department</h4>
                       <form action="post" action="#" id="addDep">
-                        <label for="dep-name" class="form-label">New department name</label>
-                        <input type="text" name="dep-name" id="dep-name" class="form-control">
+                        <label for="dep-add-name" class="form-label">New department name</label>
+                        <input type="text" name="dep-name" id="dep-add-name" class="form-control">
                         <label for="dep-location-add" class="form-label">Location</label>
                         <select id="dep-location-add" name="dep-location-add" class="form-select locDropdown">
                         </select>
                         <input type="submit" name="submit" value="Add" class="btn btn-primary mt-3" >
                       </form>
+                      <span id="addAlertDep" class="alert"></span>
                       <h4>Edit department</h4>
                       <form action="post" action="#" id="editDep">
                         <label for="dep-edit" class="form-label">Department</label>
-                        <select id="" name="dep-edit" class="form-select depDropdown">
+                        <select id="dep-edit" name="dep-edit" class="form-select depDropdown">
                         </select>
-                        <label for="dep-new-name" class="form-label">New department name</label>
-                        <input type="text" name="dep-new-name" id="dep-new-name" class="form-control">
+                        <label for="dep-edit-name" class="form-label">New department name</label>
+                        <input type="text" name="dep-edit-name" id="dep-edit-name" class="form-control">
                         <label for="dep-location-edit" class="form-label">Location</label>
                         <select id="dep-location-edit" name="dep-location-edit" class="form-select locDropdown">
                         </select>
                         <input type="submit" name="submit" value="Edit" class="btn btn-primary mt-3" >
                       </form>
+                      <span id="editAlertDep" class="alert"></span>
                       <h4>Delete department</h4>
                       <form method="post" action="#" id="deleteDep">
                         <label for="dep-del" class="form-label">Department</label>
@@ -129,6 +134,7 @@
                         </select>
                         <input type="submit" name="submit" value="Delete" class="btn btn-primary mt-3" >
                     </form>
+                    <span id="delAlertDep" class="alert"></span>
                     </div>
                     <!-- <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -153,6 +159,7 @@
                         <input type="text" name="loc-add" id="loc-add" class="form-control">
                         <input type="submit" name="submit" value="Add" class="btn btn-primary mt-3" >
                       </form>
+                      <span id="addAlertLoc" class="alert"></span>
                       <h4>Edit location</h4>
                       <form action="post" action="#" id="editLoc">
                         <label for="loc-select-edit" class="form-label">Location</label>
@@ -162,6 +169,7 @@
                         <input type="text" name="loc-name-edit" id="loc-name-edit" class="form-control">
                         <input type="submit" name="submit" value="Edit" class="btn btn-primary mt-3" >
                       </form>
+                      <span id="editAlertLoc" class="alert"></span>
                       <h4>Delete location</h4>
                       <form method="post" action="#" id="deleteLoc">
                         <label for="loc-del" class="form-label">Location</label>
@@ -169,6 +177,7 @@
                         </select>
                         <input type="submit" name="submit" value="Delete" class="btn btn-primary mt-3" >
                     </form>
+                    <span id="delAlertLoc" class="alert"></span>
                     </div>
                     <!-- <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -178,20 +187,13 @@
                 </div>
               </div>
 
-          </div>
-          <div class='col-4'>
-            <h3>Search in real time</h3>
- 
-            <input type="text" id="myInput" onkeyup="searchTable()" class="form-control">
- 
-          </div>
+          
         </div>
-        <div  class="row g-5 mx-auto">
-          <div class='col-12'>
+        <div class="table-responsive">
             <h3>All contacts</h3>
             <table class="table table-primary table-striped" id="myTable">
               <thead>
-                <tr id='tableHeader'>
+                <tr id='tableHeader' >
                   <th>First name</th>
                   <th>Last name</th>
                   <th>Email</th>
@@ -203,9 +205,6 @@
               <tbody id="allTable">
               </tbody>
             </table>
-          </div>
-          
-          
         </div>
       </div>
 

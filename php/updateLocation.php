@@ -34,35 +34,57 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-    $query = 'UPDATE location SET name = "'. $_REQUEST["loc-name-edit"] . '" WHERE id= ' . $_REQUEST["loc-select-edit"] . ';';
+	$location = $_REQUEST['loc-name-edit'];
+	$id = $_REQUEST['loc-select-edit'];
 
-	
+	$query_check = "SELECT * FROM location WHERE name='$location' AND id <> '$id'";
 
-	$result = $conn->query($query);
-	
-	if (!$result) {
+	$result_check = $conn->query($query_check);
 
-		$output['status']['code'] = "400";
-		$output['status']['name'] = "executed";
+	if(mysqli_num_rows($result_check)>=1){
+
+		$output['status']['code'] = "200";
+		$output['status']['name'] = "ok";
 		$output['status']['description'] = "query failed";	
-		$output['data'] = [];
+		$output['data'] = [1];
 
 		mysqli_close($conn);
 
-		echo json_encode($output); 
+		echo json_encode($output);
+	
+	} else {
+		
+		$query = 'UPDATE location SET name = "'. $_REQUEST["loc-name-edit"] . '" WHERE id= ' . $_REQUEST["loc-select-edit"] . ';';
 
-		exit;
+		$result = $conn->query($query);
+		
+		if (!$result) {
+	
+			$output['status']['code'] = "400";
+			$output['status']['name'] = "executed";
+			$output['status']['description'] = "query failed";	
+			$output['data'] = [];
+	
+			mysqli_close($conn);
+	
+			echo json_encode($output); 
+	
+			exit;
+	
+		}
+	
+		$output['status']['code'] = "200";
+		$output['status']['name'] = "ok";
+		$output['status']['description'] = "success";
+		$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
+		$output['data'] = [];
+		
+		mysqli_close($conn);
+	
+		echo json_encode($output); 
 
 	}
 
-	$output['status']['code'] = "200";
-	$output['status']['name'] = "ok";
-	$output['status']['description'] = "success";
-	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [];
-	
-	mysqli_close($conn);
-
-	echo json_encode($output); 
+    
 
 ?>

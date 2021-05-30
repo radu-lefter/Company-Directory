@@ -17,6 +17,7 @@
 
 	$conn = new mysqli($cd_host, $cd_user, $cd_password, $cd_dbname, $cd_port, $cd_socket);
 
+
 	if (mysqli_connect_errno()) {
 		
 		$output['status']['code'] = "300";
@@ -34,6 +35,12 @@
 	}	
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
+
+	$query_check = 'SELECT * FROM personnel WHERE departmentID='. $_REQUEST['dep-del'];
+
+	$result_check = $conn->query($query_check);
+
+	if(mysqli_num_rows($result_check)==0){
 
 	$query = 'DELETE FROM department WHERE id = ' . $_REQUEST['dep-del'];
 
@@ -63,5 +70,17 @@
 	mysqli_close($conn);
 
 	echo json_encode($output); 
+
+}else {
+
+	$output['status']['code'] = "200";
+	$output['status']['name'] = "ok";
+	$output['status']['description'] = "query failed";	
+	$output['data'] = [1];
+
+	mysqli_close($conn);
+
+	echo json_encode($output); 
+}
 
 ?>

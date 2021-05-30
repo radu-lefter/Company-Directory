@@ -34,9 +34,30 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-	$query = 'INSERT INTO department (name, locationID) VALUES("' . $_REQUEST['dep-name'] . '",' . $_REQUEST["dep-location-add"] . ')';
+	$depName=$_REQUEST['dep-name'];
 
-	$result = $conn->query($query);
+	$query_check = "SELECT * FROM department WHERE name='$depName'";
+
+	$result_check = $conn->query($query_check);
+
+	if(mysqli_num_rows($result_check)>=1){
+
+		$output['status']['code'] = "200";
+		$output['status']['name'] = "ok";
+		$output['status']['description'] = "query failed";	
+		$output['data'] = [1];
+
+		mysqli_close($conn);
+
+		echo json_encode($output); 
+
+		
+	} else {
+
+		$query = 'INSERT INTO department (name, locationID) VALUES("' . $_REQUEST['dep-name'] . '",' . $_REQUEST["dep-location-add"] . ')';
+
+		$result = $conn->query($query);
+
 	
 	if (!$result) {
 
@@ -62,5 +83,7 @@
 	mysqli_close($conn);
 
 	echo json_encode($output); 
+	}
+ 
 
 ?>

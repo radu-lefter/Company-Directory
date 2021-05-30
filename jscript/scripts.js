@@ -22,7 +22,7 @@ function getAll(){
 
             //var output = $.parseJSON(response);
             
-            console.log(response);
+            //console.log(response);
 
             var allTable =  document.getElementById('allTable');
             allTable.innerHTML = "";
@@ -202,29 +202,60 @@ $("#editPersonnel").submit(function(e) {
 //Add department
 $("#addDep").submit(function(e) {
 
-  e.preventDefault(); // avoid to execute the actual submit of the form.
-  $('#depModal').modal('hide');
-
-  var form = $(this);
+  if($('#dep-location-add').val()==null){
+      e.preventDefault();
+      $('#addAlertDep').html("Please select a location");
+      $('#addAlertDep').css("display", "block");
+      setInterval(function(){$('#addAlertDep').fadeOut();}, 3000);
+  }else if($('#dep-add-name').val()==""){
+      e.preventDefault();
+      $('#addAlertDep').html("Field cannot be empty");
+      $('#addAlertDep').css("display", "block");
+      setInterval(function(){$('#addAlertDep').fadeOut();}, 3000);
+  }else{
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+    //$('#depModal').modal('hide');
   
-  $.ajax({
-         type: "POST",
-         url: "php/insertDepartment.php",
-         data: form.serialize(), // serializes the form's elements.
-         success: function(data)
-         {
-          populateDep()
-          getAll();
-         }
-       });
+    var form = $(this);
+    
+    $.ajax({
+           type: "POST",
+           url: "php/insertDepartment.php",
+           data: form.serialize(), // serializes the form's elements.
+           success: function(response)
+           {
+            console.log(response);
+            if(response['data'].length != 0){
+              $('#addAlertDep').html("Department already present!");
+              $('#addAlertDep').css('display', 'block');
+              setInterval(function(){$('#addAlertDep').fadeOut();}, 3000);
+            }
+            populateDep();
+            populateLoc();
+            getAll();
+           }
+         }).fail(function () {
+          console.log("Error encountered!")
+        });
+  
+         $('#dep-add-name').val('');
+  }
+  
 
 });
 
 //Delete department
 $("#deleteDep").submit(function(e) {
 
+  if($('#dep-del').val()==null){
+    e.preventDefault();
+    $('#delAlertDep').html("Please select an option.");
+    $('#delAlertDep').css("display", "block");
+    setInterval(function(){$('#delAlertDep').fadeOut();}, 3000);
+  }else{
+
   e.preventDefault(); // avoid to execute the actual submit of the form.
-  $('#depModal').modal('hide');
+  //$('#depModal').modal('hide');
 
   var form = $(this);
   
@@ -232,20 +263,49 @@ $("#deleteDep").submit(function(e) {
          type: "POST",
          url: "php/deleteDepartmentByID.php",
          data: form.serialize(), // serializes the form's elements.
-         success: function(data)
+         success: function(response)
          {
+          console.log(response);
+          if(response['data'].length != 0){
+            $('#delAlertDep').html("Department field not empty!");
+            $('#delAlertDep').css('display', 'block');
+            setInterval(function(){$('#delAlertDep').fadeOut();}, 3000);
+          }
           populateDep()
           getAll();
          }
        });
 
+  }
+
 });
 
 //Update department
+$( "#dep-edit" ).change(function() {
+  $('#dep-edit-name').val($(this).children(':selected').text());
+});
+
 $("#editDep").submit(function(e) {
 
+if($('#dep-edit').val()==null){
+    e.preventDefault();
+    $('#editAlertDep').html("Please select a department");
+    $('#editAlertDep').css("display", "block");
+    setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+}else if($('#dep-location-edit').val()==null){
+  e.preventDefault();
+  $('#editAlertDep').html("Please select a location");
+  $('#editAlertDep').css("display", "block");
+  setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+}else if($('#dep-edit-name').val()==""){
+    e.preventDefault();
+    $('#editAlertDep').html("Field cannot be empty");
+    $('#editAlertDep').css("display", "block");
+    setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+}else{
+
   e.preventDefault(); // avoid to execute the actual submit of the form.
-  $('#depModal').modal('hide');
+  //$('#depModal').modal('hide');
 
   var form = $(this);
   
@@ -253,20 +313,38 @@ $("#editDep").submit(function(e) {
          type: "POST",
          url: "php/updateDepartments.php",
          data: form.serialize(), // serializes the form's elements.
-         success: function(data)
+         success: function(response)
          {
-          populateDep()
+           console.log(response);
+          if(response['data'].length != 0){
+            $('#editAlertDep').html("Department already exists!");
+            $('#editAlertDep').css('display', 'block');
+            setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+          }
+          populateDep();
+          populateLoc();
           getAll();
          }
        });
+
+       $('#dep-edit-name').val('');
+
+  }
 
 });
 
 //Add location
 $("#addLoc").submit(function(e) {
 
+  if($('#loc-add').val()==""){
+    e.preventDefault();
+    $('#addAlertLoc').html("Field cannot be empty");
+    $('#addAlertLoc').css("display", "block");
+    setInterval(function(){$('#addAlertLoc').fadeOut();}, 3000);
+  }else{
+
   e.preventDefault(); // avoid to execute the actual submit of the form.
-  $('#locModal').modal('hide');
+  //$('#locModal').modal('hide');
 
   var form = $(this);
   
@@ -274,20 +352,37 @@ $("#addLoc").submit(function(e) {
          type: "POST",
          url: "php/insertLocation.php",
          data: form.serialize(), // serializes the form's elements.
-         success: function(data)
+         success: function(response)
          {
+          //console.log(response);
+          if(response['data'].length != 0){
+            $('#addAlertLoc').html("Location already present!");
+            $('#addAlertLoc').css('display', 'block');
+            setInterval(function(){$('#addAlertLoc').fadeOut();}, 3000);
+          }
           populateLoc();
           getAll();
          }
        });
+  
+       $('#loc-add').val('');
+      
+      }
 
 });
 
-//Delete department
+//Delete location
 $("#deleteLoc").submit(function(e) {
 
+  if($('#loc-del').val()==null){
+    e.preventDefault();
+    $('#delAlertLoc').html("Please select an option.");
+    $('#delAlertLoc').css("display", "block");
+    setInterval(function(){$('#delAlertLoc').fadeOut();}, 3000);
+  }else{
+
   e.preventDefault(); // avoid to execute the actual submit of the form.
-  $('#locModal').modal('hide');
+  //$('#locModal').modal('hide');
 
   var form = $(this);
   
@@ -295,20 +390,47 @@ $("#deleteLoc").submit(function(e) {
          type: "POST",
          url: "php/deleteLocation.php",
          data: form.serialize(), // serializes the form's elements.
-         success: function(data)
+         success: function(response)
          {
+          //console.log(response);
+
+          if(response['data'].length != 0){
+            $('#delAlertLoc').html("Location field not empty!");
+            $('#delAlertLoc').css('display', 'block');
+            setInterval(function(){$('#delAlertLoc').fadeOut();}, 3000);
+          }
           populateLoc();
           getAll();
          }
        });
 
+  } 
+       //.css('display', 'none')
+
 });
 
-//Update department
+//Update location
+$( "#loc-select-edit" ).change(function() {
+  $('#loc-name-edit').val($(this).children(':selected').text());
+});
+
 $("#editLoc").submit(function(e) {
 
+  if($('#loc-select-edit').val()==null){
+    e.preventDefault();
+    $('#editAlertLoc').html("Please select a location");
+    $('#editAlertLoc').css("display", "block");
+    setInterval(function(){$('#editAlertLoc').fadeOut();}, 3000);
+}else if($('#loc-name-edit').val()==""){
+    e.preventDefault();
+    $('#editAlertLoc').html("Field cannot be empty");
+    $('#editAlertLoc').css("display", "block");
+    setInterval(function(){$('#editAlertLoc').fadeOut();}, 3000);
+}else{
+
   e.preventDefault(); // avoid to execute the actual submit of the form.
-  $('#locModal').modal('hide');
+  
+  //$('#locModal').modal('hide');
 
   var form = $(this);
   
@@ -316,12 +438,22 @@ $("#editLoc").submit(function(e) {
          type: "POST",
          url: "php/updateLocation.php",
          data: form.serialize(), // serializes the form's elements.
-         success: function(data)
+         success: function(response)
          {
+          //console.log(response);
+          if(response['data'].length != 0){
+            $('#editAlertLoc').html("Location already exists!");
+            $('#editAlertLoc').css('display', 'block');
+            setInterval(function(){$('#editAlertLoc').fadeOut();}, 3000);
+          }
           populateLoc();
           getAll();
          }
        });
+
+  $('#loc-name-edit').val('');
+
+      }
 
 });
 
@@ -339,7 +471,7 @@ function populateDep(){
       url: "php/getAllDepartments.php",
       success: function (response) {
     
-          console.log(response);
+          //console.log(response);
     
           if(response){
               for (let item of response['data']) {
@@ -369,7 +501,7 @@ function populateLoc(){
       url: "php/getAllLocations.php",
       success: function (response) {
     
-          console.log(response);
+          //console.log(response);
     
           if(response){
               for (let item of response['data']) {
@@ -414,55 +546,55 @@ function searchTable() {
 
 
 //make the table sortable
-const table = document.querySelector('table'); //get the table to be sorted
+// const table = document.querySelector('table'); //get the table to be sorted
 
-table.querySelectorAll('th') // get all the table header elements
-  .forEach((element, columnNo)=>{ // add a click handler for each 
-    element.addEventListener('click', event => {
-        sortTable(table, columnNo); //call a function which sorts the table by a given column number
-    })
-  })
+// table.querySelectorAll('th') // get all the table header elements
+//   .forEach((element, columnNo)=>{ // add a click handler for each 
+//     element.addEventListener('click', event => {
+//         sortTable(table, columnNo); //call a function which sorts the table by a given column number
+//     })
+//   })
 
-function sortTable(table, sortColumn){
-// get the data from the table cells
-const tableBody = table.querySelector('tbody')
-const tableData = table2data(tableBody);
-// sort the extracted data
-tableData.sort((a, b)=>{
-    if(a[sortColumn] > b[sortColumn]){
-    return 1;
-    }
-    return -1;
-})
-// put the sorted data back into the table
-data2table(tableBody, tableData);
-}
+// function sortTable(table, sortColumn){
+// // get the data from the table cells
+// const tableBody = table.querySelector('tbody')
+// const tableData = table2data(tableBody);
+// // sort the extracted data
+// tableData.sort((a, b)=>{
+//     if(a[sortColumn] > b[sortColumn]){
+//     return 1;
+//     }
+//     return -1;
+// })
+// // put the sorted data back into the table
+// data2table(tableBody, tableData);
+// }
 
-// this function gets data from the rows and cells 
-// within an html tbody element
-function table2data(tableBody){
-    const tableData = []; // create the array that'll hold the data rows
-    tableBody.querySelectorAll('tr')
-      .forEach(row=>{  // for each table row...
-        const rowData = [];  // make an array for that row
-        row.querySelectorAll('td')  // for each cell in that row
-          .forEach(cell=>{
-            rowData.push(cell.innerText);  // add it to the row data
-          })
-        tableData.push(rowData);  // add the full row to the table data 
-      });
-    return tableData;
-  }
+// // this function gets data from the rows and cells 
+// // within an html tbody element
+// function table2data(tableBody){
+//     const tableData = []; // create the array that'll hold the data rows
+//     tableBody.querySelectorAll('tr')
+//       .forEach(row=>{  // for each table row...
+//         const rowData = [];  // make an array for that row
+//         row.querySelectorAll('td')  // for each cell in that row
+//           .forEach(cell=>{
+//             rowData.push(cell.innerText);  // add it to the row data
+//           })
+//         tableData.push(rowData);  // add the full row to the table data 
+//       });
+//     return tableData;
+//   }
   
-  // this function puts data into an html tbody element
-  function data2table(tableBody, tableData){
-    tableBody.querySelectorAll('tr') // for each table row...
-      .forEach((row, i)=>{  
-        const rowData = tableData[i]; // get the array for the row data
-        row.querySelectorAll('td')  // for each table cell ...
-          .forEach((cell, j)=>{
-            cell.innerText = rowData[j]; // put the appropriate array element into the cell
-          })
-        tableData.push(rowData);
-      });
-  }
+//   // this function puts data into an html tbody element
+//   function data2table(tableBody, tableData){
+//     tableBody.querySelectorAll('tr') // for each table row...
+//       .forEach((row, i)=>{  
+//         const rowData = tableData[i]; // get the array for the row data
+//         row.querySelectorAll('td')  // for each table cell ...
+//           .forEach((cell, j)=>{
+//             cell.innerText = rowData[j]; // put the appropriate array element into the cell
+//           })
+//         tableData.push(rowData);
+//       });
+//   }

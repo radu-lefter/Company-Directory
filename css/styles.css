@@ -43,14 +43,69 @@ label {
 
 }
 
+/*******************/
+
 .container{
   background-color: rgb(235, 235, 235);
+ 
 }
 
-.with-margin {
+.alert{
+  display:none;
+  background-color: red;
+  color: #f2f2f2;
+  margin-top: 5px;
+  padding: 5px;
+
+}
+
+/* #delAlertLoc{
+  display:none;
+  background-color: red;
+  color: #f2f2f2;
+  margin-top: 5px;
+  padding: 5px;
+
+}
+
+#addAlertLoc{
+  display:none;
+  background-color: red;
+  color: #f2f2f2;
+  margin-top: 5px;
+  padding: 5px;
+
+}
+
+#editAlertLoc{
+  display:none;
+  background-color: red;
+  color: #f2f2f2;
+  margin-top: 5px;
+  padding: 5px;
+
+}
+
+#addAlertDep{
+  display:none;
+  background-color: red;
+  color: #f2f2f2;
+  margin-top: 5px;
+  padding: 5px;
+
+} */
+
+/* td {
+  white-space: normal !important; 
+  word-wrap: break-word;  
+}
+table {
+  table-layout: fixed;
+} */
+/* .with-margin {
   padding-top: 15px;
   padding-bottom: 15px;
   margin-bottom: 15px;
   border-bottom: gray 3px solid;
-}
+} */
 
