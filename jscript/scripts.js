@@ -24,34 +24,40 @@ function getAll(){
             
             //console.log(response);
 
-            var allTable =  document.getElementById('allTable');
-            allTable.innerHTML = "";
+            var tableContents =  document.getElementById('tableContents');
+            tableContents.innerHTML = "";
 
             for (let i in response['data']) {
                                
                 tr = document.createElement('tr'); 
 
                 td = document.createElement('td'); 
+                td.setAttribute('data-th', 'First name: ');
                 td.innerHTML = response['data'][i]['firstName'];
                 tr.appendChild(td);
                 
                 td = document.createElement('td'); 
+                td.setAttribute('data-th', 'Last name:  ');
                 td.innerHTML = response['data'][i]['lastName'];
                 tr.appendChild(td);
 
                 td = document.createElement('td'); 
+                td.setAttribute('data-th', 'Email:      ');
                 td.innerHTML = response['data'][i]['email'];
                 tr.appendChild(td);
 
                 td = document.createElement('td'); 
+                td.setAttribute('data-th', 'Department: ');
                 td.innerHTML = response['data'][i]['department'];
                 tr.appendChild(td);
 
                 td = document.createElement('td'); 
+                td.setAttribute('data-th', 'Location:   ');
                 td.innerHTML = response['data'][i]['location'];
                 tr.appendChild(td);
 
                 td = document.createElement('td'); 
+                td.setAttribute('data-th', '');
                 var btnEdit = document.createElement('button'); 
                 btnEdit.innerHTML = 'Edit';
                 btnEdit.classList = 'btn btn-success m-1';
@@ -66,7 +72,7 @@ function getAll(){
                 td.appendChild(btnDelete);
                 tr.appendChild(td);
                  
-                allTable.appendChild(tr);
+                tableContents.appendChild(tr);
 
           }
            
@@ -102,8 +108,19 @@ function deletePerson(e, id){
 //Add personnel
 $("#addPersonnel").submit(function(e) {
 
+if($('#depDropdown-add').val()==null){
+    e.preventDefault();
+    $('#addAlertPers').html("Please select a department");
+    $('#addAlertPers').css("display", "block");
+    setInterval(function(){$('#addAlertPers').fadeOut();}, 3000);
+}else if($('#firstname').val()=="" || $('#lastname').val()=="" || $('#email').val()==""){
+    e.preventDefault();
+    $('#addAlertPers').html("Field cannot be empty");
+    $('#addAlertPers').css("display", "block");
+    setInterval(function(){$('#addAlertPers').fadeOut();}, 3000);
+}else{
   e.preventDefault(); // avoid to execute the actual submit of the form.
-  $('#addModal').modal('hide');
+  //$('#addModal').modal('hide');
 
   var form = $(this);
   
@@ -113,10 +130,15 @@ $("#addPersonnel").submit(function(e) {
          data: form.serialize(), // serializes the form's elements.
          success: function(data)
          {
-
+          populateDep();
           getAll();
          }
        });
+
+       $('#firstname').val('');
+       $('#lastname').val('');
+       $('#email').val('');
+      }
 
 });
 
@@ -181,6 +203,13 @@ dropdownEdit.empty();
 
 $("#editPersonnel").submit(function(e) {
 
+if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-edit').val()==""){
+    e.preventDefault();
+    $('#editAlertPers').html("Field cannot be empty");
+    $('#editAlertPers').css("display", "block");
+    setInterval(function(){$('#editAlertPers').fadeOut();}, 3000);
+}else{
+
   e.preventDefault(); // avoid to execute the actual submit of the form.
   $('#editModal').modal('hide');
 
@@ -195,6 +224,7 @@ $("#editPersonnel").submit(function(e) {
           getAll();
          }
        });
+      }
 
 });
 

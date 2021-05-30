@@ -3,6 +3,29 @@ label {
     margin: 5px 0;
   }
 
+  h3, h4 {
+    padding: 20px;
+  }
+  
+  #myInput{
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .container{
+    background-color: rgb(235, 235, 235);
+   
+  }
+  
+  .alert{
+    display:none;
+    background-color: red;
+    color: #f2f2f2;
+    margin-top: 5px;
+    padding: 5px; 
+  
+  }
+
 /*Preloader*/
 
 #preloader {
@@ -45,55 +68,9 @@ label {
 
 /*******************/
 
-.container{
-  background-color: rgb(235, 235, 235);
- 
-}
 
-.alert{
-  display:none;
-  background-color: red;
-  color: #f2f2f2;
-  margin-top: 5px;
-  padding: 5px;
 
-}
 
-/* #delAlertLoc{
-  display:none;
-  background-color: red;
-  color: #f2f2f2;
-  margin-top: 5px;
-  padding: 5px;
-
-}
-
-#addAlertLoc{
-  display:none;
-  background-color: red;
-  color: #f2f2f2;
-  margin-top: 5px;
-  padding: 5px;
-
-}
-
-#editAlertLoc{
-  display:none;
-  background-color: red;
-  color: #f2f2f2;
-  margin-top: 5px;
-  padding: 5px;
-
-}
-
-#addAlertDep{
-  display:none;
-  background-color: red;
-  color: #f2f2f2;
-  margin-top: 5px;
-  padding: 5px;
-
-} */
 
 /* td {
   white-space: normal !important; 
@@ -107,5 +84,39 @@ table {
   padding-bottom: 15px;
   margin-bottom: 15px;
   border-bottom: gray 3px solid;
+
 } */
+
+@media only screen and (max-width: 990px) {
+  td {
+    white-space: normal !important; 
+    word-wrap: break-word;  
+  }
+  table {
+    table-layout: fixed;
+  }
+}
+
+
+
+@media only screen and (max-width: 600px) {
+
+  
+  thead th {
+      display: none;
+  }
+
+  td {
+      display: block;
+      font-size: larger;
+  }
+
+
+  td[data-th]:before  {
+      content: attr(data-th);
+      font-weight: bold;
+      /* padding-right: 20%; */
+ 
+  }
+}
 
