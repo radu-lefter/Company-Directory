@@ -60,13 +60,13 @@ function getAll(){
                 td.setAttribute('data-th', '');
                 var btnEdit = document.createElement('button'); 
                 btnEdit.innerHTML = 'Edit';
-                btnEdit.classList = 'btn btn-success m-1';
+                btnEdit.classList = 'btn btn-success btn-cust';
                 btnEdit.setAttribute('data-bs-toggle', 'modal' );
                 btnEdit.setAttribute('data-bs-target', '#editModal' );
                 btnEdit.addEventListener("click", function() { editPerson(this, response['data'][i]['id']); });
                 var btnDelete = document.createElement('button');
                 btnDelete.innerHTML = 'Delete';
-                btnDelete.classList = 'btn btn-danger';
+                btnDelete.classList = 'btn btn-danger btn-cust mt-1';
                 btnDelete.addEventListener("click", function() { deletePerson(this, response['data'][i]['id']); });
                 td.appendChild(btnEdit);
                 td.appendChild(btnDelete);
@@ -83,69 +83,59 @@ function getAll(){
     });
 };
 
+//regex that allows letters, underscore, dash and space
+var regExName = /^([a-zA-Z _-]+)$/;
+var regExEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
-//Delete personnel
-function deletePerson(e, id){
-  e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
-
-  $.ajax({
-    type: 'POST',
-    url: "php/deletePersonnel.php",
-    data: {
-          id:id
-    },
-    success: function (response) {
-
-        
-        //console.log(response);
-
-    },
-}).fail(function () {
-    console.log("Error encountered!")
-});
+//display alert function
+function displayAlert(id, message){   
+      $(id).html(message);
+      $(id).css("display", "block");
+      setInterval(function(){$(id).fadeOut();}, 3000);
 }
 
 //Add personnel
 $("#addPersonnel").submit(function(e) {
 
-if($('#depDropdown-add').val()==null){
-    e.preventDefault();
-    $('#addAlertPers').html("Please select a department");
-    $('#addAlertPers').css("display", "block");
-    setInterval(function(){$('#addAlertPers').fadeOut();}, 3000);
-}else if($('#firstname').val()=="" || $('#lastname').val()=="" || $('#email').val()==""){
-    e.preventDefault();
-    $('#addAlertPers').html("Field cannot be empty");
-    $('#addAlertPers').css("display", "block");
-    setInterval(function(){$('#addAlertPers').fadeOut();}, 3000);
-}else{
-  e.preventDefault(); // avoid to execute the actual submit of the form.
-  //$('#addModal').modal('hide');
-
-  var form = $(this);
+  if($('#depDropdown-add').val()==null){
+      e.preventDefault();
+      displayAlert('#addAlertPers', 'Please select a department!');
+  }else if($('#firstname').val()=="" || $('#lastname').val()=="" || $('#email').val()==""){
+      e.preventDefault();
+      displayAlert('#addAlertPers', 'Please complete all fields!');
+  }else if(!regExName.test($('#firstname').val()) || !regExName.test($('#lastname').val())){
+      e.preventDefault();
+      displayAlert('#addAlertPers', 'Please only use letters, spaces, dashes or underscores for names!');
+  }else{
   
-  $.ajax({
-         type: "POST",
-         url: "php/insertPersonnel.php",
-         data: form.serialize(), // serializes the form's elements.
-         success: function(data)
-         {
-          populateDep();
-          getAll();
-         }
-       });
+    e.preventDefault(); 
+   
+    var form = $(this);
+    
+    $.ajax({
+           type: "POST",
+           url: "php/insertPersonnel.php",
+           data: form.serialize(), 
+           success: function(data)
+           {
+            populateDep();
+            getAll();
+           }
+         });
+  
+         $('#firstname').val('');
+         $('#lastname').val('');
+         $('#email').val('');
+        }
+  
+  });
 
-       $('#firstname').val('');
-       $('#lastname').val('');
-       $('#email').val('');
-      }
-
-});
 
 //Update personnel
 
 function editPerson(e, id){
   
+//get row data  
   var row = e.closest("tr");
   var tds = $(row).find("td"); 
 
@@ -156,8 +146,9 @@ function editPerson(e, id){
   });
 fields.pop();
 fields.push(id);
-console.log(fields);
+//console.log(fields);
 
+//populate edit form with row data
 document.forms['editPersonnel']['firstname'].value = fields[0];
 document.forms['editPersonnel']['lastname'].value = fields[1];
 document.forms['editPersonnel']['email'].value = fields[2];
@@ -174,14 +165,15 @@ dropdownEdit.empty();
     url: "php/getAllDepartments.php",
     success: function (response) {
   
-        console.log(response);
-
+        //console.log(response);
+        //get data for department dropdown
         var result = response['data'].filter(obj => {
           return obj.name === fields[3]
         })[0]
 
-        console.log(result.id);
+        //console.log(result);
   
+        //populate edit department dropdown
         if(response){
             for (let item of response['data']) {
               if(result.id == item.id){
@@ -205,12 +197,13 @@ $("#editPersonnel").submit(function(e) {
 
 if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-edit').val()==""){
     e.preventDefault();
-    $('#editAlertPers').html("Field cannot be empty");
-    $('#editAlertPers').css("display", "block");
-    setInterval(function(){$('#editAlertPers').fadeOut();}, 3000);
+    displayAlert('#editAlertPers','Please complete all fields!');
+}else if(!regExName.test($('#firstname-edit').val()) || !regExName.test($('#lastname-edit').val())){
+  e.preventDefault();
+  displayAlert('#editAlertPers', 'Please only use letters, spaces, dashes or underscores for names!');
 }else{
 
-  e.preventDefault(); // avoid to execute the actual submit of the form.
+  e.preventDefault(); 
   $('#editModal').modal('hide');
 
   var form = $(this);
@@ -218,7 +211,7 @@ if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-
   $.ajax({
          type: "POST",
          url: "php/updatePersonnel.php",
-         data: form.serialize(), // serializes the form's elements.
+         data: form.serialize(), 
          success: function(data)
          {
           getAll();
@@ -228,37 +221,54 @@ if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-
 
 });
 
+//Delete personnel
+function deletePerson(e, id){
+  e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
+
+  $.ajax({
+    type: 'POST',
+    url: "php/deletePersonnel.php",
+    data: {
+          id:id
+    },
+    success: function (response) {
+
+        
+        //console.log(response);
+
+    },
+}).fail(function () {
+    console.log("Error encountered!")
+});
+}
+
 
 //Add department
 $("#addDep").submit(function(e) {
 
   if($('#dep-location-add').val()==null){
       e.preventDefault();
-      $('#addAlertDep').html("Please select a location");
-      $('#addAlertDep').css("display", "block");
-      setInterval(function(){$('#addAlertDep').fadeOut();}, 3000);
+      displayAlert('#addAlertDep',"Please select a location!");
   }else if($('#dep-add-name').val()==""){
       e.preventDefault();
-      $('#addAlertDep').html("Field cannot be empty");
-      $('#addAlertDep').css("display", "block");
-      setInterval(function(){$('#addAlertDep').fadeOut();}, 3000);
+      displayAlert('#addAlertDep', 'Please complete all fields!');
+  }else if(!regExName.test($('#dep-add-name').val())){
+    e.preventDefault();
+    displayAlert('#addAlertDep', 'Please only use letters, spaces, dashes or underscores for names!');
   }else{
-    e.preventDefault(); // avoid to execute the actual submit of the form.
-    //$('#depModal').modal('hide');
+    e.preventDefault(); 
   
     var form = $(this);
     
     $.ajax({
            type: "POST",
            url: "php/insertDepartment.php",
-           data: form.serialize(), // serializes the form's elements.
+           data: form.serialize(), 
            success: function(response)
            {
             console.log(response);
             if(response['data'].length != 0){
-              $('#addAlertDep').html("Department already present!");
-              $('#addAlertDep').css('display', 'block');
-              setInterval(function(){$('#addAlertDep').fadeOut();}, 3000);
+              displayAlert('#addAlertDep', "Department already present!");
             }
             populateDep();
             populateLoc();
@@ -274,41 +284,7 @@ $("#addDep").submit(function(e) {
 
 });
 
-//Delete department
-$("#deleteDep").submit(function(e) {
 
-  if($('#dep-del').val()==null){
-    e.preventDefault();
-    $('#delAlertDep').html("Please select an option.");
-    $('#delAlertDep').css("display", "block");
-    setInterval(function(){$('#delAlertDep').fadeOut();}, 3000);
-  }else{
-
-  e.preventDefault(); // avoid to execute the actual submit of the form.
-  //$('#depModal').modal('hide');
-
-  var form = $(this);
-  
-  $.ajax({
-         type: "POST",
-         url: "php/deleteDepartmentByID.php",
-         data: form.serialize(), // serializes the form's elements.
-         success: function(response)
-         {
-          console.log(response);
-          if(response['data'].length != 0){
-            $('#delAlertDep').html("Department field not empty!");
-            $('#delAlertDep').css('display', 'block');
-            setInterval(function(){$('#delAlertDep').fadeOut();}, 3000);
-          }
-          populateDep()
-          getAll();
-         }
-       });
-
-  }
-
-});
 
 //Update department
 $( "#dep-edit" ).change(function() {
@@ -319,37 +295,32 @@ $("#editDep").submit(function(e) {
 
 if($('#dep-edit').val()==null){
     e.preventDefault();
-    $('#editAlertDep').html("Please select a department");
-    $('#editAlertDep').css("display", "block");
-    setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+    displayAlert('#editAlertDep', "Please select a department!");
 }else if($('#dep-location-edit').val()==null){
   e.preventDefault();
-  $('#editAlertDep').html("Please select a location");
-  $('#editAlertDep').css("display", "block");
-  setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+  displayAlert('#editAlertDep', "Please select a location!");
 }else if($('#dep-edit-name').val()==""){
     e.preventDefault();
-    $('#editAlertDep').html("Field cannot be empty");
-    $('#editAlertDep').css("display", "block");
-    setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+    displayAlert('#editAlertDep', 'Please complete all fields!');
+}else if(!regExName.test($('#dep-edit-name').val())){
+  e.preventDefault();
+  displayAlert('#editAlertDep', 'Please only use letters, spaces, dashes or underscores for names!');
 }else{
 
-  e.preventDefault(); // avoid to execute the actual submit of the form.
-  //$('#depModal').modal('hide');
+  e.preventDefault(); 
+ 
 
   var form = $(this);
   
   $.ajax({
          type: "POST",
          url: "php/updateDepartments.php",
-         data: form.serialize(), // serializes the form's elements.
+         data: form.serialize(), 
          success: function(response)
          {
-           console.log(response);
+           //console.log(response);
           if(response['data'].length != 0){
-            $('#editAlertDep').html("Department already exists!");
-            $('#editAlertDep').css('display', 'block');
-            setInterval(function(){$('#editAlertDep').fadeOut();}, 3000);
+            displayAlert('#editAlertDep', "Department already exists!");
           }
           populateDep();
           populateLoc();
@@ -363,32 +334,63 @@ if($('#dep-edit').val()==null){
 
 });
 
+//Delete department
+$("#deleteDep").submit(function(e) {
+
+  if($('#dep-del').val()==null){
+    e.preventDefault();
+    displayAlert('#delAlertDep', "Please select a department!");
+  }else{
+
+  e.preventDefault(); 
+  
+
+  var form = $(this);
+  
+  $.ajax({
+         type: "POST",
+         url: "php/deleteDepartmentByID.php",
+         data: form.serialize(), 
+         success: function(response)
+         {
+          console.log(response);
+          if(response['data'].length != 0){
+            displayAlert('#delAlertDep', "Department field contains other records!");
+          }
+          populateDep()
+          getAll();
+         }
+       });
+
+  }
+
+});
+
 //Add location
 $("#addLoc").submit(function(e) {
 
   if($('#loc-add').val()==""){
     e.preventDefault();
-    $('#addAlertLoc').html("Field cannot be empty");
-    $('#addAlertLoc').css("display", "block");
-    setInterval(function(){$('#addAlertLoc').fadeOut();}, 3000);
+    displayAlert('#addAlertLoc', 'Please complete the field!');
+  }else if(!regExName.test($('#loc-add').val())){
+    e.preventDefault();
+    displayAlert('#addAlertLoc', 'Please only use letters, spaces, dashes or underscores for names!');
   }else{
 
-  e.preventDefault(); // avoid to execute the actual submit of the form.
-  //$('#locModal').modal('hide');
+  e.preventDefault();
+  
 
   var form = $(this);
   
   $.ajax({
          type: "POST",
          url: "php/insertLocation.php",
-         data: form.serialize(), // serializes the form's elements.
+         data: form.serialize(), 
          success: function(response)
          {
           //console.log(response);
           if(response['data'].length != 0){
-            $('#addAlertLoc').html("Location already present!");
-            $('#addAlertLoc').css('display', 'block');
-            setInterval(function(){$('#addAlertLoc').fadeOut();}, 3000);
+            displayAlert('#addAlertLoc', "Location already present!");
           }
           populateLoc();
           getAll();
@@ -401,43 +403,7 @@ $("#addLoc").submit(function(e) {
 
 });
 
-//Delete location
-$("#deleteLoc").submit(function(e) {
 
-  if($('#loc-del').val()==null){
-    e.preventDefault();
-    $('#delAlertLoc').html("Please select an option.");
-    $('#delAlertLoc').css("display", "block");
-    setInterval(function(){$('#delAlertLoc').fadeOut();}, 3000);
-  }else{
-
-  e.preventDefault(); // avoid to execute the actual submit of the form.
-  //$('#locModal').modal('hide');
-
-  var form = $(this);
-  
-  $.ajax({
-         type: "POST",
-         url: "php/deleteLocation.php",
-         data: form.serialize(), // serializes the form's elements.
-         success: function(response)
-         {
-          //console.log(response);
-
-          if(response['data'].length != 0){
-            $('#delAlertLoc').html("Location field not empty!");
-            $('#delAlertLoc').css('display', 'block');
-            setInterval(function(){$('#delAlertLoc').fadeOut();}, 3000);
-          }
-          populateLoc();
-          getAll();
-         }
-       });
-
-  } 
-       //.css('display', 'none')
-
-});
 
 //Update location
 $( "#loc-select-edit" ).change(function() {
@@ -448,33 +414,29 @@ $("#editLoc").submit(function(e) {
 
   if($('#loc-select-edit').val()==null){
     e.preventDefault();
-    $('#editAlertLoc').html("Please select a location");
-    $('#editAlertLoc').css("display", "block");
-    setInterval(function(){$('#editAlertLoc').fadeOut();}, 3000);
+    displayAlert('#editAlertLoc', "Please select a location!");
 }else if($('#loc-name-edit').val()==""){
     e.preventDefault();
-    $('#editAlertLoc').html("Field cannot be empty");
-    $('#editAlertLoc').css("display", "block");
-    setInterval(function(){$('#editAlertLoc').fadeOut();}, 3000);
+    displayAlert('#editAlertLoc', 'Please complete all fields!');
+}else if(!regExName.test($('#loc-name-edit').val())){
+  e.preventDefault();
+  displayAlert('#editAlertLoc', 'Please only use letters, spaces, dashes or underscores for names!');
 }else{
 
-  e.preventDefault(); // avoid to execute the actual submit of the form.
+  e.preventDefault(); 
   
-  //$('#locModal').modal('hide');
 
   var form = $(this);
   
   $.ajax({
          type: "POST",
          url: "php/updateLocation.php",
-         data: form.serialize(), // serializes the form's elements.
+         data: form.serialize(), 
          success: function(response)
          {
           //console.log(response);
           if(response['data'].length != 0){
-            $('#editAlertLoc').html("Location already exists!");
-            $('#editAlertLoc').css('display', 'block');
-            setInterval(function(){$('#editAlertLoc').fadeOut();}, 3000);
+            displayAlert('#editAlertLoc', "Location already exists!");
           }
           populateLoc();
           getAll();
@@ -484,6 +446,40 @@ $("#editLoc").submit(function(e) {
   $('#loc-name-edit').val('');
 
       }
+
+});
+
+//Delete location
+$("#deleteLoc").submit(function(e) {
+
+  if($('#loc-del').val()==null){
+    e.preventDefault();
+    displayAlert('#delAlertLoc', "Please select a location!");
+  }else{
+
+  e.preventDefault(); 
+
+
+  var form = $(this);
+  
+  $.ajax({
+         type: "POST",
+         url: "php/deleteLocation.php",
+         data: form.serialize(), 
+         success: function(response)
+         {
+          //console.log(response);
+
+          if(response['data'].length != 0){
+            displayAlert('#delAlertLoc', "Location field contains other records!");
+          }
+          populateLoc();
+          getAll();
+         }
+       });
+
+  } 
+ 
 
 });
 
@@ -548,8 +544,6 @@ function populateLoc(){
 
 
 
-
-
 //Search 
 function searchTable() {
   var input, filter, found, table, tr, td, i, j;
@@ -575,56 +569,3 @@ function searchTable() {
 
 
 
-//make the table sortable
-// const table = document.querySelector('table'); //get the table to be sorted
-
-// table.querySelectorAll('th') // get all the table header elements
-//   .forEach((element, columnNo)=>{ // add a click handler for each 
-//     element.addEventListener('click', event => {
-//         sortTable(table, columnNo); //call a function which sorts the table by a given column number
-//     })
-//   })
-
-// function sortTable(table, sortColumn){
-// // get the data from the table cells
-// const tableBody = table.querySelector('tbody')
-// const tableData = table2data(tableBody);
-// // sort the extracted data
-// tableData.sort((a, b)=>{
-//     if(a[sortColumn] > b[sortColumn]){
-//     return 1;
-//     }
-//     return -1;
-// })
-// // put the sorted data back into the table
-// data2table(tableBody, tableData);
-// }
-
-// // this function gets data from the rows and cells 
-// // within an html tbody element
-// function table2data(tableBody){
-//     const tableData = []; // create the array that'll hold the data rows
-//     tableBody.querySelectorAll('tr')
-//       .forEach(row=>{  // for each table row...
-//         const rowData = [];  // make an array for that row
-//         row.querySelectorAll('td')  // for each cell in that row
-//           .forEach(cell=>{
-//             rowData.push(cell.innerText);  // add it to the row data
-//           })
-//         tableData.push(rowData);  // add the full row to the table data 
-//       });
-//     return tableData;
-//   }
-  
-//   // this function puts data into an html tbody element
-//   function data2table(tableBody, tableData){
-//     tableBody.querySelectorAll('tr') // for each table row...
-//       .forEach((row, i)=>{  
-//         const rowData = tableData[i]; // get the array for the row data
-//         row.querySelectorAll('td')  // for each table cell ...
-//           .forEach((cell, j)=>{
-//             cell.innerText = rowData[j]; // put the appropriate array element into the cell
-//           })
-//         tableData.push(rowData);
-//       });
-//   }

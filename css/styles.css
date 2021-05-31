@@ -1,30 +1,3 @@
-label {
-    display: block;
-    margin: 5px 0;
-  }
-
-  h3, h4 {
-    padding: 20px;
-  }
-  
-  #myInput{
-    width: 80%;
-    margin: 0 auto;
-  }
-
-  .container{
-    background-color: rgb(235, 235, 235);
-   
-  }
-  
-  .alert{
-    display:none;
-    background-color: red;
-    color: #f2f2f2;
-    margin-top: 5px;
-    padding: 5px; 
-  
-  }
 
 /*Preloader*/
 
@@ -87,15 +60,70 @@ table {
 
 } */
 
-@media only screen and (max-width: 990px) {
+label {
+  display: block;
+  margin: 5px 0;
+}
+
+h3, h4 {
+  padding: 20px;
+}
+
+#myInput{
+  width: 80%;
+  margin: 0 auto;
+}
+
+.container{
+  background-color: rgb(235, 235, 235);
+ 
+}
+
+.alert{
+  display:none;
+  background-color: red;
+  color: #f2f2f2;
+  margin-top: 5px;
+  padding: 5px; 
+
+}
+
+.btn-cust{
+  width: 100%;
+}
+
+#tableHeader th:nth-child(1){
+  width: 13%;
+}
+#tableHeader th:nth-child(2){
+  width: 14%;
+}
+#tableHeader th:nth-child(3){
+  width: 20%;
+}
+#tableHeader th:nth-child(4){
+  width: 21%;
+}
+#tableHeader th:nth-child(5){
+  width: 15%;
+}
+#tableHeader th:nth-child(6){
+  width: 17%;
+}
+
+
+/* @media only screen and (max-width: 990px) { */
+
+  table {
+    table-layout: fixed;
+  }
+
   td {
     white-space: normal !important; 
     word-wrap: break-word;  
   }
-  table {
-    table-layout: fixed;
-  }
-}
+  
+
 
 
 
@@ -109,12 +137,14 @@ table {
   td {
       display: block;
       font-size: larger;
+      text-align: right;
   }
 
 
   td[data-th]:before  {
       content: attr(data-th);
       font-weight: bold;
+      float: left;
       /* padding-right: 20%; */
  
   }
