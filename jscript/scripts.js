@@ -1,13 +1,11 @@
-//Preloader
-$(window).on('load', function () {
-  if ($('#preloader').length) {
-  $('#preloader').delay(100).fadeOut('slow', function() {$(this).remove();});
-}
-});
 
 
 //load all data at startup
 $(window).on('load', function(){
+  if ($('#preloader').length) {
+    console.log("hi");
+    $('#preloader').delay(100).fadeOut('slow', function() {$(this).remove();});
+  }
   getAll();
   populateDep();
   populateLoc();
@@ -58,18 +56,18 @@ function getAll(){
 
                 td = document.createElement('td'); 
                 td.setAttribute('data-th', '');
-                var btnEdit = document.createElement('button'); 
-                btnEdit.innerHTML = 'Edit';
-                btnEdit.classList = 'btn btn-success btn-cust';
-                btnEdit.setAttribute('data-bs-toggle', 'modal' );
-                btnEdit.setAttribute('data-bs-target', '#editModal' );
-                btnEdit.addEventListener("click", function() { editPerson(this, response['data'][i]['id']); });
-                var btnDelete = document.createElement('button');
-                btnDelete.innerHTML = 'Delete';
-                btnDelete.classList = 'btn btn-danger btn-cust mt-1';
-                btnDelete.addEventListener("click", function() { deletePerson(this, response['data'][i]['id']); });
-                td.appendChild(btnEdit);
-                td.appendChild(btnDelete);
+                var imgEdit = document.createElement('img'); 
+                imgEdit.setAttribute('src', 'css/pen.svg');
+                imgEdit.setAttribute('data-bs-toggle', 'modal' );
+                imgEdit.setAttribute('data-bs-target', '#editPersModal' );
+                imgEdit.addEventListener("click", function() { editPerson(this, response['data'][i]['id']); });
+                var imgDelete = document.createElement('img');
+                imgDelete.setAttribute('src', 'css/trash.svg');
+                imgDelete.setAttribute('data-bs-toggle', 'modal' );
+                imgDelete.setAttribute('data-bs-target', '#delPersModal' );
+                imgDelete.addEventListener("click", function() { deletePerson(this, response['data'][i]['id']); });
+                td.appendChild(imgEdit);
+                td.appendChild(imgDelete);
                 tr.appendChild(td);
                  
                 tableContents.appendChild(tr);
@@ -153,7 +151,7 @@ document.forms['editPersonnel']['firstname'].value = fields[0];
 document.forms['editPersonnel']['lastname'].value = fields[1];
 document.forms['editPersonnel']['email'].value = fields[2];
 //document.forms['editPersonnel']['department'].value = fields[3];
-document.forms['editPersonnel']['id'].value = fields[5];
+document.forms['editPersonnel']['id-edit'].value = fields[5];
 
 let dropdownEdit = $('#depDropdown-edit');
 
@@ -204,7 +202,7 @@ if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-
 }else{
 
   e.preventDefault(); 
-  $('#editModal').modal('hide');
+  $('#editPersModal').modal('hide');
 
   var form = $(this);
   
@@ -223,23 +221,36 @@ if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-
 
 //Delete personnel
 function deletePerson(e, id){
-  e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
 
-  $.ajax({
-    type: 'POST',
-    url: "php/deletePersonnel.php",
-    data: {
-          id:id
-    },
-    success: function (response) {
+  var event = e;
+  var rmvFrom = e.parentNode.parentNode.parentNode;
+  var rmv = e.parentNode.parentNode;
+  document.forms['deletePerson']['id-del'].value = id;
+  //e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
 
-        
-        //console.log(response);
+  $("#deletePerson").submit(function(e){
 
-    },
-}).fail(function () {
-    console.log("Error encountered!")
-});
+    event.parentNode.parentNode.parentNode.removeChild(event.parentNode.parentNode);
+
+    e.preventDefault(); 
+    var form = $(this);
+
+    $.ajax({
+        type: 'POST',
+        url: "php/deletePersonnel.php",
+        data: form.serialize(),
+        success: function (response) {
+    
+            
+            //console.log(response);
+    
+        }
+    }).fail(function () {
+        console.log("Error encountered!")
+    });
+  });
+  
+  
 }
 
 
@@ -468,7 +479,7 @@ $("#deleteLoc").submit(function(e) {
          data: form.serialize(), 
          success: function(response)
          {
-          //console.log(response);
+          console.log(response);
 
           if(response['data'].length != 0){
             displayAlert('#delAlertLoc', "Location field contains other records!");

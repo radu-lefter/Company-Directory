@@ -35,13 +35,28 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-	$query_check = 'SELECT * FROM department WHERE locationID='. $_REQUEST['loc-del'];
+	$locDel ="";
+
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		$locDel = test_input($_POST["loc-del"]);
+	}
+
+	function test_input($data) {
+	$data = trim($data);
+	$data = stripslashes($data);
+	$data = htmlspecialchars($data);
+	return $data;
+	}
+
+	//$locDel = $_REQUEST['loc-del'];
+
+	$query_check = 'SELECT * FROM department WHERE locationID='. $locDel;
 
 	$result_check = $conn->query($query_check);
 
 	if(mysqli_num_rows($result_check)==0){
 
-		$query = 'DELETE FROM location WHERE id = ' . $_REQUEST['loc-del'];
+		$query = 'DELETE FROM location WHERE id = ' . $locDel;
 
 		$result = $conn->query($query);
 		
@@ -74,7 +89,8 @@
 
 			$output['status']['code'] = "200";
 			$output['status']['name'] = "ok";
-			$output['status']['description'] = "query failed";	
+			$output['status']['description'] = "location has dependencies";
+			$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";	
 			$output['data'] = [1];
 	
 			mysqli_close($conn);
