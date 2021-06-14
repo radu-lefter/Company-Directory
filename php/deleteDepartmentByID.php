@@ -35,14 +35,17 @@
 	}	
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
+	$depID = $_REQUEST['dep-del'];
 
-	$query_check = 'SELECT * FROM personnel WHERE departmentID='. $_REQUEST['dep-del'];
+	$query_check = 'SELECT count(id) as pc FROM personnel WHERE departmentID='. $depID;
 
 	$result_check = $conn->query($query_check);
 
-	if(mysqli_num_rows($result_check)==0){
+	$row = $result_check->fetch_row();
 
-	$query = 'DELETE FROM department WHERE id = ' . $_REQUEST['dep-del'];
+	if($row[0]==0){
+
+	$query = 'DELETE FROM department WHERE id = ' . $depID;
 
 	$result = $conn->query($query);
 	
@@ -75,8 +78,8 @@
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
-	$output['status']['description'] = "query failed";	
-	$output['data'] = [1];
+	$output['status']['description'] = "department has dependencies";	
+	$output['data'] = $row[0];
 
 	mysqli_close($conn);
 

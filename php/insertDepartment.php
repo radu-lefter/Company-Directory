@@ -44,7 +44,7 @@
 
 		$output['status']['code'] = "200";
 		$output['status']['name'] = "ok";
-		$output['status']['description'] = "query failed";	
+		$output['status']['description'] = "department already present";	
 		$output['data'] = [1];
 
 		mysqli_close($conn);

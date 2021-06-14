@@ -34,9 +34,6 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-    //$query = 'INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES("' . $_REQUEST['name'] . '",' . $_REQUEST["locationID"] . ')';
-
-	//$query = 'INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES("' . $_REQUEST["firstname"] . '", ' . '"' . $_REQUEST["lastname"] . '",' . '"'  . $_REQUEST["email"] . '",' . '(SELECT id FROM department WHERE name = '. '"' . $_REQUEST["department"] . '"' .'))';
 
 	$query = 'INSERT INTO personnel (firstName, lastName, email, departmentID) VALUES("' . $_REQUEST["firstname"] . '", ' . '"' . $_REQUEST["lastname"] . '",' . '"'  . $_REQUEST["email"] . '",' . $_REQUEST["department"] .')';
 

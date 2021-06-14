@@ -89,7 +89,8 @@ var regExEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 function displayAlert(id, message){   
       $(id).html(message);
       $(id).css("display", "block");
-      setInterval(function(){$(id).fadeOut();}, 3000);
+      //setInterval(function(){$(id).fadeOut();}, 3000);
+      $(id).delay(6200).fadeOut(300);
 }
 
 //Add personnel
@@ -116,11 +117,12 @@ $("#addPersonnel").submit(function(e) {
            data: form.serialize(), 
            success: function(data)
            {
+            
             populateDep();
             getAll();
            }
          });
-  
+         displayAlert('#addAlertPers', 'Person added successfully!');
          $('#firstname').val('');
          $('#lastname').val('');
          $('#email').val('');
@@ -202,7 +204,7 @@ if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-
 }else{
 
   e.preventDefault(); 
-  $('#editPersModal').modal('hide');
+  //$('#editPersModal').modal('hide');
 
   var form = $(this);
   
@@ -215,6 +217,8 @@ if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-
           getAll();
          }
        });
+
+       displayAlert('#editAlertPers', 'Person updated successfully!');
       }
 
 });
@@ -223,8 +227,6 @@ if($('#firstname-edit').val()=="" || $('#lastname-edit').val()=="" || $('#email-
 function deletePerson(e, id){
 
   var event = e;
-  var rmvFrom = e.parentNode.parentNode.parentNode;
-  var rmv = e.parentNode.parentNode;
   document.forms['deletePerson']['id-del'].value = id;
   //e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
 
@@ -245,9 +247,13 @@ function deletePerson(e, id){
             //console.log(response);
     
         }
+
+        
     }).fail(function () {
         console.log("Error encountered!")
     });
+
+    displayAlert('#delAlertPers', 'Person deleted successfully!');
   });
   
   
@@ -288,7 +294,7 @@ $("#addDep").submit(function(e) {
          }).fail(function () {
           console.log("Error encountered!")
         });
-  
+        displayAlert('#addAlertDep', "Department added successfully!");
          $('#dep-add-name').val('');
   }
   
@@ -338,7 +344,7 @@ if($('#dep-edit').val()==null){
           getAll();
          }
        });
-
+       displayAlert('#editAlertDep', "Department updated successfully!");
        $('#dep-edit-name').val('');
 
   }
@@ -346,36 +352,46 @@ if($('#dep-edit').val()==null){
 });
 
 //Delete department
-$("#deleteDep").submit(function(e) {
-
+$('#delDepBtn').on('click', function(){
   if($('#dep-del').val()==null){
-    e.preventDefault();
+    
     displayAlert('#delAlertDep', "Please select a department!");
   }else{
+    $('#delAlertDep').html('Are you sure you want to delete the department?');
+    $('#delAlertDep').css("display", "block");
+    $('#delDepBtn').hide();
+    $('#delDepCnfBtn').show();
+  }
+});
 
-  e.preventDefault(); 
-  
+$("#deleteDep").submit(function(e) {
 
-  var form = $(this);
-  
-  $.ajax({
-         type: "POST",
-         url: "php/deleteDepartmentByID.php",
-         data: form.serialize(), 
-         success: function(response)
-         {
-          console.log(response);
-          if(response['data'].length != 0){
-            displayAlert('#delAlertDep', "Department field contains other records!");
-          }
-          populateDep()
-          getAll();
-         }
-       });
+    e.preventDefault(); 
+    var form = $(this);
+      $.ajax({
+             type: "POST",
+             url: "php/deleteDepartmentByID.php",
+             data: form.serialize(), 
+             success: function(response)
+             {
+              console.log(response);
+              if(response['data'].length != 0){
+                displayAlert('#delAlertDep', "Department field contains other records!");
+                $('#delDepBtn').show();
+                $('#delDepCnfBtn').hide();
+              }
+              populateDep()
+              getAll();
+             }
+           });
+           displayAlert('#delAlertDep', "Department deleted successfully!");
+           $('#delDepBtn').show();
+           $('#delDepCnfBtn').hide();
+    
 
   }
 
-});
+);
 
 //Add location
 $("#addLoc").submit(function(e) {
@@ -407,7 +423,7 @@ $("#addLoc").submit(function(e) {
           getAll();
          }
        });
-  
+       displayAlert('#addAlertLoc', "Location added successfully!");
        $('#loc-add').val('');
       
       }
@@ -453,24 +469,31 @@ $("#editLoc").submit(function(e) {
           getAll();
          }
        });
-
-  $('#loc-name-edit').val('');
+       displayAlert('#editAlertLoc', "Location updated successfully!");
+       $('#loc-name-edit').val('');
 
       }
 
 });
 
 //Delete location
-$("#deleteLoc").submit(function(e) {
-
+$('#delLocBtn').on('click', function(){
   if($('#loc-del').val()==null){
-    e.preventDefault();
+    
     displayAlert('#delAlertLoc', "Please select a location!");
   }else{
+    $('#delAlertLoc').html('Are you sure you want to delete the department?');
+    $('#delAlertLoc').css("display", "block");
+    $('#delLocBtn').hide();
+    $('#delLocCnfBtn').show();
+  }
+});
+
+$("#deleteLoc").submit(function(e) {
+
+  
 
   e.preventDefault(); 
-
-
   var form = $(this);
   
   $.ajax({
@@ -483,16 +506,19 @@ $("#deleteLoc").submit(function(e) {
 
           if(response['data'].length != 0){
             displayAlert('#delAlertLoc', "Location field contains other records!");
+            $('#delLocBtn').show();
+            $('#delLocCnfBtn').hide();
           }
           populateLoc();
           getAll();
          }
        });
+       displayAlert('#delAlertLoc', "Location deleted successfully!");
+       $('#delLocBtn').show();
+       $('#delLocCnfBtn').hide();
 
   } 
- 
-
-});
+);
 
 
 //Populate the departments select list
@@ -509,6 +535,10 @@ function populateDep(){
       success: function (response) {
     
           //console.log(response);
+
+          response['data'].sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+
+          //console.log(response['data']);
     
           if(response){
               for (let item of response['data']) {
@@ -539,6 +569,8 @@ function populateLoc(){
       success: function (response) {
     
           //console.log(response);
+
+          response['data'].sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
     
           if(response){
               for (let item of response['data']) {
@@ -554,6 +586,14 @@ function populateLoc(){
 }
 
 
+//Clear search
+
+function clearSearch(){
+  var searchBar = document.getElementById('myInput');
+  searchBar.value = '';
+  searchBar.focus();
+  searchTable()
+}
 
 //Search 
 function searchTable() {

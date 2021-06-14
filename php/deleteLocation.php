@@ -50,11 +50,13 @@
 
 	//$locDel = $_REQUEST['loc-del'];
 
-	$query_check = 'SELECT * FROM department WHERE locationID='. $locDel;
+	$query_check = 'SELECT count(id) as dp FROM department WHERE locationID='. $locDel;
 
 	$result_check = $conn->query($query_check);
 
-	if(mysqli_num_rows($result_check)==0){
+	$row = $result_check->fetch_row();
+
+	if($row[0]==0){
 
 		$query = 'DELETE FROM location WHERE id = ' . $locDel;
 
@@ -91,7 +93,7 @@
 			$output['status']['name'] = "ok";
 			$output['status']['description'] = "location has dependencies";
 			$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";	
-			$output['data'] = [1];
+			$output['data'] = $row[0];
 	
 			mysqli_close($conn);
 	

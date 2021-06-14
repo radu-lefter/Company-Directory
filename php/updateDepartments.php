@@ -38,6 +38,7 @@
 	$depEdit = $_REQUEST['dep-edit-name'];
 	//$depLocEdit = $_REQUEST['dep-location-edit'];
 
+	//check if there is a dep with the new name
 	$query_check = "SELECT * FROM department WHERE name='$depEdit' AND id <> '$depID'";
 
 	$result_check = $conn->query($query_check);

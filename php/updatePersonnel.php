@@ -34,7 +34,7 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-    $query = 'UPDATE personnel SET firstName = "'. $_REQUEST["firstname"] . '", lastName = "'. $_REQUEST["lastname"] . '", email = "' . $_REQUEST["email"] . '", departmentID = "'. $_REQUEST["department"] . '" WHERE id= ' . $_REQUEST["id"] . ';';
+    $query = 'UPDATE personnel SET firstName = "'. $_REQUEST["firstname"] . '", lastName = "'. $_REQUEST["lastname"] . '", email = "' . $_REQUEST["email"] . '", departmentID = "'. $_REQUEST["department"] . '" WHERE id= ' . $_REQUEST["id-edit"] . ';';
 
 	//$query = 'UPDATE personnel (name, locationID) VALUES("' . $_REQUEST['name'] . '",' . $_REQUEST["locationID"] . ')';
 
