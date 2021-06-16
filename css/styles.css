@@ -60,6 +60,22 @@ table {
 
 } */
 
+/*Make table header always stay on top*/
+#managerTable {
+  max-height: 800px;
+  overflow: auto;
+}
+
+table {
+  position: relative;
+}
+
+th {
+  position: sticky;
+  top: 0;
+}
+
+
 
 label {
   display: block;

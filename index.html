@@ -23,9 +23,6 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <!-- <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li> -->
               <li class="nav-item" >
                 <a class="nav-link" href="#" data-bs-target="#addPersModal" data-bs-toggle="modal">Add personnel</a>
               </li>
@@ -64,8 +61,8 @@
         
       <!-- Table  -->
       <div class="row table-responsive">
-            
-            <table class="table table-primary table-striped mt-3" id="myTable">
+          <div id="managerTable">
+              <table class="table table-primary table-striped mt-3" id="myTable">
               <thead>
                 <tr id='tableHeader' >
                   <th>First name</th>
@@ -79,6 +76,8 @@
               <tbody id="tableContents">
               </tbody>
             </table>
+          </div>
+            
         </div>
       </div>
 
@@ -336,6 +335,11 @@
         
         
     <div id="preloader"></div>
+    <script>
+      if ( window.history.replaceState ) {
+          window.history.replaceState( null, null, window.location.href );
+      }
+  </script>
     <script src="jscript/scripts.js"></script>
 
     </body>

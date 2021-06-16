@@ -233,8 +233,8 @@ function deletePerson(e, id){
   $("#deletePerson").submit(function(e){
 
     event.parentNode.parentNode.parentNode.removeChild(event.parentNode.parentNode);
-
     e.preventDefault(); 
+    $( "#deletePerson" ).unbind();
     var form = $(this);
 
     $.ajax({
@@ -306,7 +306,10 @@ $("#addDep").submit(function(e) {
 //Update department
 $( "#dep-edit" ).change(function() {
   $('#dep-edit-name').val($(this).children(':selected').text());
+  var option = $('option:selected', this).attr('data-loc');
+  $('#dep-location-edit').val(option);
 });
+
 
 $("#editDep").submit(function(e) {
 
@@ -534,7 +537,7 @@ function populateDep(){
       url: "php/getAllDepartments.php",
       success: function (response) {
     
-          //console.log(response);
+          console.log(response);
 
           response['data'].sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 
@@ -542,7 +545,7 @@ function populateDep(){
     
           if(response){
               for (let item of response['data']) {
-                dropdownAdd.append($('<option></option>').attr('value', item.id).text(item.name));
+                dropdownAdd.append($('<option></option>').attr({'value':item.id, 'data-loc':item.locationID}).text(item.name));
            }
           }
          
